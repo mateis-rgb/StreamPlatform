@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>StreamPlatform</title>
+        <style>
+
+			/* Main */
+			html,
+			body {
+				overflow: hidden;
+				min-height: 100%;
+				min-width: 100%;
+			}
+			body {
+				font-family: "Oxygen", "Helvetica Neue", sans-serif;
+				font-weight: 300;
+				font-size: 24px !important;
+				color: #f1f1f1;
+				color: rgba(255, 255, 255, .75);
+				background-color: #294172;
+				background-size: cover;
+			}
+			body:before,
+			body:after {
+				content: " ";
+				width: 100%;
+				height: 50%;
+				position: absolute;
+				z-index: 99;
+				transition: all .25s ease-out;
+			}
+			body:before {
+				top: -50%;
+			}
+			body:after {
+				top: 100%;
+			}
+			body.close:before {
+				top: 0;
+			}
+			body.close:after {
+				top: 50%;
+			}
+			#main-container {
+				width: 100%;
+				position: absolute;
+				top: 50%;
+				transform: translate(0, -50%);
+				text-align: center;
+				padding: 20px;
+			}
+			#system-title,
+			#system-timing {
+				padding: 25px 20px;
+				margin-bottom: 15px;
+			}
+			#system-information {
+				transition-delay: .3s;
+			}
+			#system-information.hide {
+				transition-delay: 0s;
+			}
+			#system-information, #system-selected {
+				transition: all .2s ease-in;
+			}
+			#system-selected {
+				position: absolute;
+				width: 100%;
+				text-align: center;
+				left: 0px;
+			}
+			.hide {
+				opacity: 0;
+			}
+			.system-circle {
+				width: 64px;
+				height: 64px;
+				border-radius: 50%;
+				display: inline-block;
+				position: relative;
+				margin: 0 10px;
+				cursor: pointer;
+				transform: translate(0,-32px);
+				transition: all .2s ease-in;
+				background-size: contain;
+				background-repeat: no-repeat;
+				background-position: center;
+			}
+			.system-circle:before {
+				content: " ";
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 64px;
+				height: 64px;
+				border-radius: 50%;
+				border: solid 0px #fff;
+				opacity: 0;
+				transition: all .2s ease-in;
+				z-index: -1;
+			}
+			.system-circle:hover:before {
+				opacity: .1;
+				border-width: 6px;
+				width: 64px;
+				height: 64px;
+				margin: -6px 0 0 -6px;
+			}
+			.system-circle:active {
+				transform: translate(0,-32px) scale(.97, .97);
+			}
+			.system-circle.default-circle {
+				width: 112px;
+				height: 112px;
+				border: solid 8px rgba(255, 255, 255, .1);
+				transform: translate(0,0);
+				background-clip: padding-box;
+			}
+			.system-circle.default-circle:before {
+				display: none;
+			}
+			.system-circle.default-circle:active {
+				transform: translate(0,0) scale(.97, .97);
+			}
+			#netflix {
+				background-color: #000;
+				background-image: url("img/netflix.jpg");
+			}
+			#primevideo {
+				background-color: #DD4814;
+				background-image: url("img/primevideo.png");
+			}
+			#canal {
+				background-color: #fff;
+				background-image: url("img/canal.png");
+			}
+			#disney {
+				/* background-color: #294172; */
+				background-image: url("img/disney.png");
+			}
+			#ocs {
+				background-color: #181818;
+				background-image: url("img/ocs.png");
+			}
+			#apple {
+				background-color: #fff;
+				background-image: url("img/apple.jpg");
+			}
+			#add-platform {
+				background-color: #313131;
+				background-image: url("img/white-plus-icon-3.png");
+				background-size: 50%;
+			}
+        </style>
+    </head>
+    <body>
+        <div>
+            <!-- si aucune platforme n'apparait => afficher un boutton qui en ajoute une -->
+        
+            <section id="main-container">
+                <header id="system-title">
+                    <h1 id="system-information">Choisissez votre platforme : <h1>
+                </header>
+                <div id="system-container">
+                    <!-- <div id="add-platform" class="system-circle" content="Ajouter une platforme de streaming"></div> -->
+                </div>
+				<footer>
+					<span id="system-selected"></span>
+				</footer>
+            </section>
+
+		<script>
+			// Functions
+
+			function sleep(ms) {
+				return new Promise((resolve) => setTimeout(resolve, ms));
+			}
+
+			function changeSelectedPlatform(element, text) {
+				element.innerText = text;
+			}
+
+		</script>
+
+        <script>
+			// App script
+
+            const DOM_platforms = document.querySelector("div#system-container");
+			const DOM_selected = document.querySelector("span#system-selected");
+
+			const platforms = [
+				{ id: "netflix", name: "Netflix", link: "https://www.netflix.com/fr/login" },
+				{ id: "primevideo", name: "Amazon Prime Vidéo", link: "https://www.amazon.fr/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Feu.primevideo.com%2Fauth%2Freturn%2Fref%3Dav_auth_ap%3F_t%3Dsg6GIoyvArJa7L4Kg1LRU90XHUPfVlG-N_yVqoSPZiNimAAAAAQAAAABiuIxMcmF3AAAAAPgWC9WfHH8iB-olH_E9xQ%26language%3Dfr_FR%26location%3D%2F%3F_encoding%253DUTF8%2526ref_%253Ddv_auth_ret%2526language%253Dfr_FR&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&accountStatusPolicy=P1&openid.assoc_handle=amzn_prime_video_sso_fr&openid.mode=checkid_setup&siteState=260-8415296-9158014&language=fr_FR&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0" },
+				{ id: "canal", name: "Canal + Séries", link: "https://compte-canal.canal-plus.com/oauth2/authentication?displayTvByCanal=true&from=idpoauth2&idpName=myCANAL&omnitureChannel=mycanal&pass_target=https%3A%2F%2Fpass.canal-plus.com%2FIdPOAuth2%2Fauth%2Fmycanal%3Fclient_id%3D2E4A08AA4ACEF15A%26portailId%3DvbdTj7eb6aM.%26redirect_uri%3Dhttps%253A%252F%252Fwww.canalplus.com%252Ftous-canalplus-series%252F%26response_type%3Dcode%26scope%3Dpass_profile%2520email%26state%3Dorigref%253Dhttps%253A%252F%252Fwww.canalplus.com%252Ftous-canalplus-series%252F%26media%3Dweb&portailId=0&socialLinksDisabled=true&sourceURL=https%3A%2F%2Fpass.canal-plus.com%2FIdPOAuth2%2Fauth%2Fmycanal%3Fclient_id%3D2E4A08AA4ACEF15A%26portailId%3DvbdTj7eb6aM.%26redirect_uri%3Dhttps%253A%252F%252Fwww.canalplus.com%252Ftous-canalplus-series%252F%26response_type%3Dcode%26scope%3Dpass_profile%2520email%26state%3Dorigref%253Dhttps%253A%252F%252Fwww.canalplus.com%252Ftous-canalplus-series%252F%26media%3Dweb&ssoconf=auth_oauth2", logo: "./img/canal.png" },
+				{ id: "disney", name: "Disney +", link: "https://www.disneyplus.com/login", logo: "./img/disney.png" },
+				{ id: "ocs", name: "OCS", link: "https://go.ocs.fr/connect", logo: "./img/ocs.png" },
+				{ id: "apple", name: "Apple TV +", link: "https://tv.apple.com/fr?l=fr", logo: "./img/apple.jpg" },
+			];
+
+
+			platforms.forEach((element) => {
+				let platform = document.createElement("div");
+
+				DOM_platforms.append(platform);
+
+				platform.id = element.id;
+				platform.classList.add("system-circle");
+				platform.setAttribute("content", element.name);
+				platform.setAttribute("link", element.link);
+			});
+
+			var system = document.querySelectorAll("div.system-circle");
+
+			system.forEach((element) => {
+				element.addEventListener("mouseenter", async (e) => {
+					changeSelectedPlatform(DOM_selected, element.getAttribute("content"));
+					await sleep(2500);
+					changeSelectedPlatform(DOM_selected, "");
+				});
+
+				element.addEventListener("click", (e) => {
+					window.location.href = element.getAttribute("link");
+				});
+			});
+        </script>
+    </body>
+</html>
